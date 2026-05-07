@@ -1,7 +1,8 @@
 import requests
 import json
 import os
-api_key=os.getenv("OPENROUTER_API_KEY")
+api_key=os.getenv("OPENAI_API_KEY")
+print("API Key:", api_key)
 url ="https://openrouter.ai/api/v1/chat/completions"
 
 
