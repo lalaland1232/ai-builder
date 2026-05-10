@@ -26,19 +26,39 @@ def healt_analyze():
     """
 
     url = "https://openrouter.ai/api/v1/chat/completions"
-    response=requests.post(url,headers={
-        "Authorization":f"Bearer {api_key}",
-        "Content-Type":"application/json"
-    },json={
-        "model":"openai/gpt-4o-mini",
-        "messages":[{"role":"user","content":prompt}]
-    })
-    result=response.json()["choices"][0]["message"]["content"]
-    return json.loads(result)
+    try:
+        response=requests.post(url,headers={
+            "Authorization":f"Bearer {api_key}",
+            "Content-Type":"application/json"
+        },json={
+            "model":"openai/gpt-4o-mini",
+            "messages":[{"role":"user","content":prompt}]
+        })
+    except:
+        return {
+            "error":True,
+            "message":"Failed to connect to OpenAI API",
+        }
+    if response.status_code == 200:
+        result = response.json()
+        content = result['choices'][0]['message']['content']
+        try :
+            return json.loads(content)
+        except:
+            return {
+                "error":True,
+                "message":"Failed to parse JSON from response",}
 
 
 
 def trigger_alert(data):
+    if data.get("error"):
+        return {
+            "alert":False,
+            "devices":0,
+            "reason":"Failed to analyze health data",
+            "inform_hospital":False
+        }
     if(data["severity"]=="high" and data["probability"]>0.3) or (data["severity"]=="medium" and data["probability"]>0.6):
         print("Alert triggered with severity:", data["severity"], "and probability:", data["probability"])
         return {
@@ -56,7 +76,7 @@ def trigger_alert(data):
             "reason":"No alert triggered",
             "inform_hospital":False
         }
-def send_notification(alert):
+def send_notification(alert):   
     if alert["alert"]:
         for device in alert["devices"]:
             print("notification sent to ",device["type"])
