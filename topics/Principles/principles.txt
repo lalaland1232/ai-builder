@@ -1,0 +1,5 @@
+SRP: each class should perform single responsiblity
+ISP: if all child class of abstract class doesnt irequire to implement all method we create new abstract class with required methods
+OCP: we add new features without editing working code
+LSP:same like isp if child classes of parent class does not require all methods or characterstics of parent class we create new class which inherit parent class and add new feature
+DIP: it says system code should not depend on single ,odule directly instead on abstract classes
